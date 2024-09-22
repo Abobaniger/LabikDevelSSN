@@ -35,11 +35,14 @@
             position: absolute;
             background-color: black;
         }
-        .wall1 { top: 100px; left: 0; width: 500px; height: 20px; }
-        .wall2 { top: 200px; left: 100px; width: 20px; height: 300px; }
-        .wall3 { top: 300px; left: 200px; width: 300px; height: 20px; }
-        .wall4 { top: 400px; left: 50px; width: 20px; height: 200px; }
-        /* Добавляем больше стен по мере необходимости */
+        /* Змеевидные стены */
+        .wall1 { top: 50px; left: 0; width: 200px; height: 20px; }
+        .wall2 { top: 50px; left: 200px; width: 20px; height: 100px; }
+        .wall3 { top: 150px; left: 100px; width: 120px; height: 20px; }
+        .wall4 { top: 150px; left: 220px; width: 20px; height: 200px; }
+        .wall5 { top: 350px; left: 120px; width: 200px; height: 20px; }
+        .wall6 { top: 350px; left: 320px; width: 20px; height: 100px; }
+        .wall7 { top: 450px; left: 50px; width: 300px; height: 20px; }
         
         #finish {
             position: absolute;
@@ -73,14 +76,15 @@
         <div class="wall wall2"></div>
         <div class="wall wall3"></div>
         <div class="wall wall4"></div>
-        <!-- Добавляем больше стен -->
+        <div class="wall wall5"></div>
+        <div class="wall wall6"></div>
+        <div class="wall wall7"></div>
         <div id="finish"></div>
     </div>
 </div>
 
-<div id="screamer" src=""></div>
+<div id="screamer"></div>
 
-<!-- Добавляем аудио элемент для звука скримера -->
 <audio id="screamSound" src="strashnye-zvuki-1.mp3"></audio>
 
 <script>
@@ -136,7 +140,7 @@
         if (playerRect.left < finishRect.right && playerRect.right > finishRect.left &&
             playerRect.top < finishRect.bottom && playerRect.bottom > finishRect.top) {
             alert('Поздравляем, вы прошли лабиринт!');
-            resetGame();
+            closeGame(); // Закрыть игру
         }
     }
 
@@ -149,6 +153,12 @@
             screamer.style.display = 'none';
             resetGame();
         }, 1000);
+    }
+
+    // Закрыть игру
+    function closeGame() {
+        alert('Игра окончена. Закрываем страницу.');
+        window.close(); // Закрыть страницу
     }
 
     // Сбрасываем игру
