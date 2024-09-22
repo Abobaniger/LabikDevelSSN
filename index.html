@@ -37,7 +37,20 @@
         }
         .wall1 { top: 100px; left: 0; width: 500px; height: 20px; }
         .wall2 { top: 200px; left: 100px; width: 20px; height: 300px; }
-        /* Добавьте больше стен для сложности */
+        .wall3 { top: 300px; left: 200px; width: 300px; height: 20px; }
+        .wall4 { top: 400px; left: 50px; width: 20px; height: 200px; }
+        /* Добавляем больше стен по мере необходимости */
+        
+        #finish {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: green;
+            top: 550px;
+            left: 550px;
+            box-shadow: 0 0 20px 5px yellow;
+        }
+
         #screamer {
             display: none;
             position: fixed;
@@ -45,7 +58,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: url('screamer.jpg') no-repeat center center;
+            background: url('5415610584235371386.jpg') no-repeat center center;
             background-size: cover;
             z-index: 100;
         }
@@ -60,47 +73,53 @@
         <div class="wall wall2"></div>
         <div class="wall wall3"></div>
         <div class="wall wall4"></div>
-        <div class="wall wall5"></div>
-        <div class="wall wall6"></div>
-        <div class="wall wall7"></div>
-        <div class="wall wall8"></div>
-        <!-- Добавьте больше стен -->
+        <!-- Добавляем больше стен -->
+        <div id="finish"></div>
     </div>
 </div>
 
-<div id="screamer"></div>
+<div id="screamer" src=""></div>
+
+<!-- Добавляем аудио элемент для звука скримера -->
+<audio id="screamSound" src="strashnye-zvuki-1.mp3"></audio>
 
 <script>
     let player = document.getElementById('player');
     let screamer = document.getElementById('screamer');
+    let screamSound = document.getElementById('screamSound');
+    let finish = document.getElementById('finish');
+    
+    // Позиция игрока
     let playerPos = { top: 10, left: 10 };
 
-    document.addEventListener('keydown', function(event) {
-        switch(event.key) {
-            case 'ArrowUp':
-                playerPos.top -= 10;
-                break;
-            case 'ArrowDown':
-                playerPos.top += 10;
-                break;
-            case 'ArrowLeft':
-                playerPos.left -= 10;
-                break;
-            case 'ArrowRight':
-                playerPos.left += 10;
-                break;
+    // Следим за мышью
+    document.addEventListener('mousemove', function(event) {
+        let mazeRect = document.getElementById('maze').getBoundingClientRect();
+        
+        // Рассчитываем координаты мыши внутри лабиринта
+        let mouseX = event.clientX - mazeRect.left;
+        let mouseY = event.clientY - mazeRect.top;
+        
+        if (mouseX >= 0 && mouseX <= mazeRect.width - 20 &&
+            mouseY >= 0 && mouseY <= mazeRect.height - 20) {
+            playerPos.left = mouseX;
+            playerPos.top = mouseY;
         }
+
         player.style.top = playerPos.top + 'px';
         player.style.left = playerPos.left + 'px';
 
         checkCollision();
+        checkFinish();
     });
 
+    // Проверка на столкновение с стенами
     function checkCollision() {
         let walls = document.querySelectorAll('.wall');
+        let playerRect = player.getBoundingClientRect();
+        
         walls.forEach(function(wall) {
             let wallRect = wall.getBoundingClientRect();
-            let playerRect = player.getBoundingClientRect();
             
             if (playerRect.left < wallRect.right && playerRect.right > wallRect.left &&
                 playerRect.top < wallRect.bottom && playerRect.bottom > wallRect.top) {
@@ -109,8 +128,22 @@
         });
     }
 
+    // Проверка на достижение финиша
+    function checkFinish() {
+        let finishRect = finish.getBoundingClientRect();
+        let playerRect = player.getBoundingClientRect();
+
+        if (playerRect.left < finishRect.right && playerRect.right > finishRect.left &&
+            playerRect.top < finishRect.bottom && playerRect.bottom > finishRect.top) {
+            alert('Поздравляем, вы прошли лабиринт!');
+            resetGame();
+        }
+    }
+
+    // Включаем скример (изображение + звук)
     function triggerScreamer() {
         screamer.style.display = 'block';
+        screamSound.play(); // Воспроизводим звук
         setTimeout(function() {
             alert('Вы проиграли!');
             screamer.style.display = 'none';
@@ -118,6 +151,7 @@
         }, 1000);
     }
 
+    // Сбрасываем игру
     function resetGame() {
         playerPos = { top: 10, left: 10 };
         player.style.top = playerPos.top + 'px';
